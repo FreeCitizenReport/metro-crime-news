@@ -52,6 +52,7 @@ select:focus, .filter-text:focus { outline: none; border-color: #1f6feb; }
 .src-rrj { background: #1f3a5f; color: #79c0ff; }
 .src-henrico { background: #2d1f3d; color: #d2a8ff; }
 .src-richmond { background: #1f3d2a; color: #56d364; }
+.src-pamunkey { background: #3d2a1f; color: #fd7e14; }
 /* CENTER */
 #center-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #30363d; min-width: 0; }
 .panel-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; color: #8b949e; padding: 8px 12px 7px; border-bottom: 1px solid #30363d; flex-shrink: 0; }
@@ -394,7 +395,17 @@ function normalizeRichmond(arr) {
       height: r.height || '',
       weight: r.weight || ''
     };
-  });
+  }
+    function normalizePamunkey(r) {
+      return {
+        jacket: r.jacket || '', lastName: r.lastName || '', firstName: r.firstName || '',
+        middleName: r.middleName || '', bookDate: r.bookDate || '', releaseDate: r.releaseDate || '',
+        mugshot: r.mugshot || '', race: r.race || '', sex: r.sex || '', age: r.age || '',
+        height: r.height || '', weight: r.weight || '', hairColor: r.hairColor || '',
+        eyeColor: r.eyeColor || '', address: r.address || '', charges: r.charges || [],
+        source: 'Pamunkey'
+      };
+    });
 }
 
 /* ═══════════════════════════════════════
