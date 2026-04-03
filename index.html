@@ -395,17 +395,21 @@ function normalizeRichmond(arr) {
       height: r.height || '',
       weight: r.weight || ''
     };
-  }
-    function normalizePamunkey(r) {
-      return {
+  });
+}
+
+function normalizePamunkey(arr) {
+  return arr.map(function(r) {
+    return {
         jacket: r.jacket || '', lastName: r.lastName || '', firstName: r.firstName || '',
         middleName: r.middleName || '', bookDate: r.bookDate || '', releaseDate: r.releaseDate || '',
         mugshot: r.mugshot || '', race: r.race || '', sex: r.sex || '', age: r.age || '',
         height: r.height || '', weight: r.weight || '', hairColor: r.hairColor || '',
         eyeColor: r.eyeColor || '', address: r.address || '', charges: r.charges || [],
         source: 'Pamunkey'
-      };
-    }
+    };
+  });
+}
 
 /* ═══════════════════════════════════════
    DATA LOADING — fetch all 3 sources
@@ -463,6 +467,11 @@ function normalizeRichmond(arr) {
     .then(function(r) { return r.json(); })
     .then(function(data) { RECORDS = RECORDS.concat(normalizeRichmond(data)); sourcesLoaded.richmond = true; })
     .catch(function(e) { console.error('Richmond load failed:', e); })
+
+  fetch('https://freecitizenreport.github.io/pamunkey-viewer/data.json?v=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(data) { allRecords = allRecords.concat(normalizePamunkey(data)); renderAll(); })
+    .catch(function(e) { console.error('Pamunkey load failed:', e); })
     .then(progress);
 })();
 
@@ -573,7 +582,7 @@ function render() {
   img.src = mugshotURLs[mugKey] || rec.mugshot || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="210" height="210"><rect width="210" height="210" fill="%230d1117"/><text x="105" y="115" text-anchor="middle" fill="%238b949e" font-size="13">No Photo</text></svg>';
 
   // Source badge
-  var srcClass = rec.source === 'RRJ' ? 'src-rrj' : rec.source === 'Henrico' ? 'src-henrico' : 'src-richmond';
+  var srcClass = rec.source === 'RRJ' ? 'src-rrj' : rec.source === 'Henrico' ? 'src-henrico' : rec.source === 'Pamunkey' ? 'src-pamunkey' : 'src-richmond';
   var srcLabel = rec.source === 'RRJ' ? 'Riverside Regional' : rec.source === 'Henrico' ? 'Henrico County' : 'Richmond City';
 
   // ID info panel
