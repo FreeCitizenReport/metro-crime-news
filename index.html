@@ -590,7 +590,7 @@ function render() {
 
   // Source badge
   var srcClass = rec.source === 'RRJ' ? 'src-rrj' : rec.source === 'Henrico' ? 'src-henrico' : rec.source === 'Pamunkey' ? 'src-pamunkey' : 'src-richmond';
-  var srcLabel = rec.source === 'RRJ' ? 'Riverside Regional' : rec.source === 'Henrico' ? 'Henrico County' : 'Richmond City';
+  var srcLabel = rec.source === 'RRJ' ? 'Riverside Regional' : rec.source === 'Henrico' ? 'Henrico County' : rec.source === 'Pamunkey' ? 'Pamunkey Regional' : 'Richmond City';
 
   // ID info panel
   var idHTML = '<div class="id-row"><div class="id-label">Name</div><div class="id-value name">' + rec.name + '</div></div>';
