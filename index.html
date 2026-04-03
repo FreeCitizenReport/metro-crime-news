@@ -401,12 +401,19 @@ function normalizeRichmond(arr) {
 function normalizePamunkey(arr) {
   return arr.map(function(r) {
     return {
-        jacket: r.jacket || '', lastName: r.lastName || '', firstName: r.firstName || '',
-        middleName: r.middleName || '', bookDate: r.bookDate || '', releaseDate: r.releaseDate || '',
-        mugshot: r.mugshot || '', race: r.race || '', sex: r.sex || '', age: r.age || '',
-        height: r.height || '', weight: r.weight || '', hairColor: r.hairColor || '',
-        eyeColor: r.eyeColor || '', address: r.address || '', charges: r.charges || [],
-        source: 'Pamunkey'
+      id: r.jacket || '',
+      name: ((r.lastName || '') + ', ' + (r.firstName || '') + ' ' + (r.middleName || '')).trim(),
+      dob: r.age ? 'Age ' + r.age : '',
+      sex: r.sex || '',
+      race: r.race || '',
+      bookDate: r.bookDate || '',
+      releaseDate: r.releaseDate || '',
+      charges: r.charges || [],
+      bonds: [],
+      mugshot: r.mugshot || '',
+      courtHistory: [],
+      county: r.address || '',
+      source: 'Pamunkey'
     };
   });
 }
