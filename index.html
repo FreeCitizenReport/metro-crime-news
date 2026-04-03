@@ -470,7 +470,7 @@ function normalizePamunkey(arr) {
 
   fetch('https://freecitizenreport.github.io/pamunkey-viewer/data.json?v=' + Date.now())
     .then(function(r) { return r.json(); })
-    .then(function(data) { RECORDS = RECORDS.concat(normalizePamunkey(data)); renderAll(); })
+    .then(function(data) { RECORDS = RECORDS.concat(normalizePamunkey(data)); NOT_FOUND(); })
     .catch(function(e) { console.error('Pamunkey load failed:', e); })
     .then(progress);
 })();
