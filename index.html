@@ -509,6 +509,7 @@ function normalizePamunkey(arr) {
       overlay.classList.add('hidden');
       applyFilters();
       preloadBlobs();
+      if (typeof renderLanding === "function") renderLanding();
     }
   }
 
