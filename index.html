@@ -165,12 +165,60 @@ select:focus, .filter-text:focus { outline: none; border-color: #1f6feb; }
   #court-section { overflow-y: visible; height: auto; }
   #ad-panel { width: 100%; border-left: none; border-top: 1px solid #dadce0; display: flex; flex-direction: column; overflow-y: visible; padding: 12px; background: #f8f9fa; }
 }
+
+/* LANDING PAGE */
+#landing-page { flex:1; overflow-y:auto; padding:20px; }
+#landing-page.hidden { display:none; }
+.landing-header { max-width:1100px; margin:0 auto 16px; display:flex; align-items:center; justify-content:space-between; }
+.landing-header h2 { font-size:18px; color:#f0f6fc; }
+.landing-header h2 .count { font-size:12px; color:#8b949e; font-weight:400; }
+.featured-grid { max-width:1100px; margin:0 auto; display:flex; flex-direction:column; gap:12px; }
+.feat-card { background:#161b22; border:1px solid #30363d; border-radius:10px; overflow:hidden; cursor:pointer; transition:border-color 0.15s; }
+.feat-card:hover { border-color:#58a6ff; }
+.feat-card.expanded { border-color:#1f6feb; }
+.feat-top { display:flex; gap:16px; padding:16px; }
+.feat-mug { width:120px; height:160px; border-radius:6px; overflow:hidden; flex-shrink:0; background:#0d1117; }
+.feat-mug img { width:100%; height:100%; object-fit:cover; }
+.feat-mug-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#484f58; font-size:11px; }
+.feat-info { flex:1; min-width:0; }
+.feat-name { font-size:16px; font-weight:700; color:#f0f6fc; margin-bottom:4px; }
+.feat-source { display:inline-block; font-size:10px; padding:2px 8px; border-radius:10px; font-weight:600; margin-bottom:6px; }
+.feat-meta { font-size:12px; color:#8b949e; margin-bottom:8px; }
+.feat-charges { display:flex; flex-direction:column; gap:4px; }
+.feat-charge { background:#0d1117; border:1px solid #30363d; border-radius:4px; padding:6px 10px; font-size:12px; color:#f0f6fc; }
+.feat-charge .charge-code { color:#8b949e; font-size:10px; }
+.feat-charge .charge-grade { font-size:10px; margin-left:6px; }
+.feat-bonds { font-size:11px; color:#8b949e; margin-top:4px; }
+.feat-expand-area { display:none; padding:0 16px 16px; border-top:1px solid #21262d; margin-top:0; }
+.feat-card.expanded .feat-expand-area { display:flex; gap:20px; padding-top:16px; }
+.feat-big-mug { width:280px; flex-shrink:0; }
+.feat-big-mug img { width:100%; border-radius:8px; }
+.feat-court { flex:1; min-width:0; max-height:400px; overflow-y:auto; }
+.feat-court h3 { font-size:13px; color:#8b949e; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+.feat-court-card { background:#0d1117; border:1px solid #30363d; border-radius:4px; padding:8px 10px; margin-bottom:6px; font-size:12px; }
+.feat-court-card .court-charge { color:#f0f6fc; font-weight:600; }
+.feat-court-card .court-meta { color:#8b949e; font-size:11px; margin-top:2px; }
+.feat-court-card .court-detail { color:#8b949e; font-size:10px; margin-top:4px; display:none; }
+.feat-court-card.expanded .court-detail { display:block; }
+.feat-click-hint { font-size:10px; color:#484f58; margin-top:4px; text-align:right; }
+/* VIEW TOGGLE */
+#view-toggle { display:flex; gap:4px; }
+#view-toggle button.active { background:#1f6feb; border-color:#1f6feb; color:#fff; }
+/* Hide main when landing visible */
+#main.hidden { display:none; }
+@media (max-width:700px) {
+  .feat-top { flex-direction:column; }
+  .feat-mug { width:100%; height:200px; }
+  .feat-card.expanded .feat-expand-area { flex-direction:column; }
+  .feat-big-mug { width:100%; }
+}
 </style>
 </head>
 <body>
 
 <div id="header">
   <h1>Metro Crime News</h1>
+  <div id="view-toggle"><button id="btn-home" class="active" onclick="showLanding()">Home</button><button id="btn-browse" onclick="showBrowse()">Browse</button></div>
   <div id="search-wrap">
     <input id="search-input" type="text" placeholder="Search by name..." autocomplete="off">
     <div id="search-results"></div>
@@ -241,7 +289,12 @@ select:focus, .filter-text:focus { outline: none; border-color: #1f6feb; }
   <div id="active-filters"></div>
 </div>
 
-<div id="main">
+<div id="landing-page">
+  <div class="landing-header"><h2>Latest Bookings <span class="count" id="feat-count"></span></h2></div>
+  <div class="featured-grid" id="featured-grid"></div>
+</div>
+
+<div id="main" class="hidden">
   <div id="loading-overlay"><div class="spin"></div><div class="loading-text">Loading records...</div></div>
 
   <!-- LEFT: Mugshot + inmate info -->
@@ -362,7 +415,7 @@ function normalizeHenrico(arr) {
       bonds: r.bondAmount && r.bondAmount !== '0' ? [{bondType: 'Bond', amount: '$' + Number(r.bondAmount).toLocaleString()}] : [],
       mugshot: r.mugshot || '',
       courtHistory: r.courtHistory || [],
-      county: 'Henrico County',
+      county: 'Henrico Co. Jail Website',
       source: 'Henrico',
       facility: r.facility || ''
     };
@@ -389,7 +442,7 @@ function normalizeRichmond(arr) {
       bonds: [],
       mugshot: r.mugshot || '',
       courtHistory: [],
-      county: 'Richmond City',
+      county: 'Richmond City Jail',
       source: 'Richmond',
       age: r.age || '',
       height: r.height || '',
@@ -574,7 +627,7 @@ function getLastName(n) { if (!n) return ''; return n.split(',')[0].trim().toUpp
 function lastNameMatches(courtName, imlName) { if (!courtName) return true; return getLastName(courtName) === getLastName(imlName); }
 function dobMatches(courtDOB, imlDOB) { if (!courtDOB) return true; if (!imlDOB) return true; var parts = imlDOB.split('/'); if (parts.length < 3) return true; var imlMMDD = parts[0] + '/' + parts[1]; return courtDOB === imlMMDD; }
 
-var FIPS_MAP = {'003':'Albemarle','510':'Alexandria','005':'Alleghany','007':'Amelia','009':'Amherst','011':'Appomattox','013':'Arlington','015':'Augusta','017':'Bath','019':'Bedford','021':'Bland','023':'Botetourt','520':'Bristol','025':'Brunswick','027':'Buchanan','029':'Buckingham','530':'Buena Vista','031':'Campbell','033':'Caroline','035':'Carroll','036':'Charles City','037':'Charlotte','540':'Charlottesville','041':'Chesterfield','043':'Clarke','045':'Craig','047':'Cumberland','049':'Dickenson','051':'Dinwiddie','053':'Colonial Heights','057':'Essex','061':'Fauquier','063':'Floyd','065':'Fluvanna','067':'Franklin Co','069':'Frederick','071':'Giles','073':'Gloucester','075':'Goochland','077':'Grayson','079':'Greene','081':'Greensville','083':'Halifax','085':'Hanover','550':'Harrisonburg','570':'Hampton','087':'Henrico','089':'Henry','091':'Highland','093':'Isle of Wight','095':'James City','097':'King and Queen','099':'King George','101':'King William','103':'Lancaster','105':'Lee','107':'Loudoun','109':'Louisa','111':'Lunenburg','113':'Lynchburg','115':'Madison','117':'Martinsville','119':'Mathews','121':'Mecklenburg','125':'Middlesex','127':'Montgomery','131':'Northampton','133':'Northumberland','135':'Nottoway','670':'Newport News','690':'Norton','700':'Norfolk','710':'Norfolk','137':'Orange','139':'Page','141':'Patrick','143':'Pittsylvania','145':'Powhatan','147':'Prince Edward','149':'Prince George','153':'Prince William','155':'Pulaski','730':'Petersburg','157':'Rappahannock','159':'Richmond Co','760':'Richmond City','761':'Richmond City','762':'Richmond City','163':'Roanoke Co','770':'Roanoke City','165':'Rockbridge','167':'Rockingham','169':'Russell','171':'Scott','173':'Shenandoah','175':'Smyth','177':'Southampton','179':'Spotsylvania','181':'Stafford','183':'Suffolk','185':'Surry','187':'Sussex','790':'Staunton','191':'Tazewell','193':'Warren','195':'Washington','197':'Westmoreland','199':'Williamsburg','800':'Virginia Beach','810':'Virginia Beach','820':'Waynesboro','830':'Winchester','840':'Wise','161':'Roanoke Co','650':'Hampton','680':'Lynchburg','701':'Newport News','702':'Norfolk','740':'Portsmouth','201':'Loudoun'};
+var FIPS_MAP = {'003':'Albemarle','510':'Alexandria','005':'Alleghany','007':'Amelia','009':'Amherst','011':'Appomattox','013':'Arlington','015':'Augusta','017':'Bath','019':'Bedford','021':'Bland','023':'Botetourt','520':'Bristol','025':'Brunswick','027':'Buchanan','029':'Buckingham','530':'Buena Vista','031':'Campbell','033':'Caroline','035':'Carroll','036':'Charles City','037':'Charlotte','540':'Charlottesville','041':'Chesterfield','043':'Clarke','045':'Craig','047':'Cumberland','049':'Dickenson','051':'Dinwiddie','053':'Colonial Heights','057':'Essex','061':'Fauquier','063':'Floyd','065':'Fluvanna','067':'Franklin Co','069':'Frederick','071':'Giles','073':'Gloucester','075':'Goochland','077':'Grayson','079':'Greene','081':'Greensville','083':'Halifax','085':'Hanover','550':'Harrisonburg','570':'Hampton','087':'Henrico','089':'Henry','091':'Highland','093':'Isle of Wight','095':'James City','097':'King and Queen','099':'King George','101':'King William','103':'Lancaster','105':'Lee','107':'Loudoun','109':'Louisa','111':'Lunenburg','113':'Lynchburg','115':'Madison','117':'Martinsville','119':'Mathews','121':'Mecklenburg','125':'Middlesex','127':'Montgomery','131':'Northampton','133':'Northumberland','135':'Nottoway','670':'Newport News','690':'Norton','700':'Norfolk','710':'Norfolk','137':'Orange','139':'Page','141':'Patrick','143':'Pittsylvania','145':'Powhatan','147':'Prince Edward','149':'Prince George','153':'Prince William','155':'Pulaski','730':'Petersburg','157':'Rappahannock','159':'Richmond Co','760':'Richmond City Jail','761':'Richmond City Jail','762':'Richmond City Jail','163':'Roanoke Co','770':'Roanoke City','165':'Rockbridge','167':'Rockingham','169':'Russell','171':'Scott','173':'Shenandoah','175':'Smyth','177':'Southampton','179':'Spotsylvania','181':'Stafford','183':'Suffolk','185':'Surry','187':'Sussex','790':'Staunton','191':'Tazewell','193':'Warren','195':'Washington','197':'Westmoreland','199':'Williamsburg','800':'Virginia Beach','810':'Virginia Beach','820':'Waynesboro','830':'Winchester','840':'Wise','161':'Roanoke Co','650':'Hampton','680':'Lynchburg','701':'Newport News','702':'Norfolk','740':'Portsmouth','201':'Loudoun'};
 function courtLabel(code) { if (!code) return ''; if (code.length > 4) return code; var num = code.substring(0, 3); var lvl = code.charAt(3); var loc = FIPS_MAP[num] || num; var ct = lvl === 'G' ? 'GDC' : lvl === 'C' ? 'Circuit' : lvl === 'J' ? 'J&DR' : 'Court'; return loc + ' ' + ct; }
 
 /* ═══════════════════════════════════════
@@ -594,7 +647,7 @@ function render() {
 
   // Source badge
   var srcClass = rec.source === 'RRJ' ? 'src-rrj' : rec.source === 'Henrico' ? 'src-henrico' : rec.source === 'Pamunkey' ? 'src-pamunkey' : 'src-richmond';
-  var srcLabel = rec.source === 'RRJ' ? 'Riverside Regional' : rec.source === 'Henrico' ? 'Henrico County' : rec.source === 'Pamunkey' ? 'Pamunkey Regional' : 'Richmond City';
+  var srcLabel = rec.source === 'RRJ' ? 'Riverside Regional Jail' : rec.source === 'Henrico' ? 'Henrico Co. Jail Website' : rec.source === 'Pamunkey' ? 'Pamunkey Regional Jail' : 'Richmond City Jail';
 
   // ID info panel
   var idHTML = '<div class="id-row"><div class="id-label">Name</div><div class="id-value name">' + rec.name + '</div></div>';
@@ -710,6 +763,148 @@ searchInput.addEventListener('input', function() {
   searchResults.style.display = 'block';
 });
 document.addEventListener('click', function(e) { if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) searchResults.style.display = 'none'; });
+
+/* ========== LANDING PAGE ========== */
+var currentView = 'landing';
+
+function sourceLabel(src) {
+  var map = { 'RRJ': 'Riverside Regional Jail', 'Henrico': 'Henrico Co. Jail Website', 'Pamunkey': 'Pamunkey Regional Jail', 'Richmond': 'Richmond City Jail' };
+  return map[src] || src;
+}
+function sourceBadgeClass(src) {
+  if (src === 'RRJ') return 'src-rrj';
+  if (src === 'Henrico') return 'src-henrico';
+  if (src === 'Pamunkey') return 'src-pamunkey';
+  return 'src-richmond';
+}
+
+window.showLanding = function() {
+  currentView = 'landing';
+  document.getElementById('landing-page').classList.remove('hidden');
+  document.getElementById('main').classList.add('hidden');
+  document.getElementById('btn-home').classList.add('active');
+  document.getElementById('btn-browse').classList.remove('active');
+  renderLanding();
+};
+window.showBrowse = function() {
+  currentView = 'browse';
+  document.getElementById('landing-page').classList.add('hidden');
+  document.getElementById('main').classList.remove('hidden');
+  document.getElementById('btn-home').classList.remove('active');
+  document.getElementById('btn-browse').classList.add('active');
+  render();
+};
+
+function renderLanding() {
+  var withMug = [];
+  for (var i = 0; i < filteredIndices.length && withMug.length < 10; i++) {
+    var r = RECORDS[filteredIndices[i]];
+    if (r.mugshot && r.mugshot.length > 100) withMug.push({ rec: r, pos: filteredIndices[i] });
+  }
+  document.getElementById('feat-count').textContent = '(' + withMug.length + ' featured of ' + filteredIndices.length + ' total)';
+  var grid = document.getElementById('featured-grid');
+  var html = '';
+  for (var j = 0; j < withMug.length; j++) {
+    var rec = withMug[j].rec;
+    var pos = withMug[j].pos;
+    var held = !rec.releaseDate;
+    var mugKey = rec.source + '-' + rec.id;
+    var imgSrc = mugshotURLs[mugKey] || rec.mugshot;
+    var srcLbl = sourceLabel(rec.source);
+    var srcCls = sourceBadgeClass(rec.source);
+
+    html += '<div class="feat-card" data-pos="' + pos + '" id="feat-' + j + '">';
+    html += '<div class="feat-top">';
+    html += '<div class="feat-mug">';
+    if (imgSrc && imgSrc.length > 100) {
+      html += '<img src="' + esc(imgSrc) + '" alt="' + esc(rec.name) + '">';
+    } else {
+      html += '<div class="feat-mug-placeholder">No Photo</div>';
+    }
+    html += '</div>';
+    html += '<div class="feat-info">';
+    html += '<div class="feat-name">' + esc(rec.name) + '</div>';
+    html += '<span class="feat-source badge badge-source ' + srcCls + '">' + esc(srcLbl) + '</span>';
+    html += '<div class="feat-meta">Booked: <strong>' + esc(rec.bookDate || 'Unknown') + '</strong> &middot; ID: ' + esc(rec.id) + ' &middot; <span class="badge ' + (held ? 'badge-held' : 'badge-released') + '">' + (held ? 'IN CUSTODY' : 'RELEASED') + '</span></div>';
+
+    // Charges
+    var charges = rec.charges || [];
+    if (charges.length > 0) {
+      html += '<div class="feat-charges">';
+      for (var k = 0; k < charges.length; k++) {
+        var c = charges[k];
+        var desc = (typeof c === 'string') ? c : (c.description || 'Unknown Charge');
+        var code = (typeof c === 'object' && c.code) ? c.code : '';
+        var grade = (typeof c === 'object' && c.grade) ? c.grade : '';
+        html += '<div class="feat-charge">' + esc(desc);
+        if (code) html += ' <span class="charge-code">[' + esc(code) + ']</span>';
+        if (grade) html += '<span class="charge-grade tag ' + gradeClass(grade) + '">' + esc(grade) + '</span>';
+        html += '</div>';
+      }
+      html += '</div>';
+    } else {
+      html += '<div style="font-size:11px;color:#484f58;margin-top:4px;">No charge details on file.</div>';
+    }
+
+    // Bonds
+    if (rec.bonds && rec.bonds.length > 0) {
+      var bondStrs = rec.bonds.map(function(b) { return (b.bondType || 'Bond') + (b.amount && b.amount !== '$0.00' ? ': ' + b.amount : ''); });
+      html += '<div class="feat-bonds">Bond: ' + esc(bondStrs.join(' | ')) + '</div>';
+    }
+
+    html += '<div class="feat-click-hint">Click to expand mugshot & court history</div>';
+    html += '</div></div>'; // close feat-info, feat-top
+
+    // Expanded area (hidden by default)
+    html += '<div class="feat-expand-area">';
+    html += '<div class="feat-big-mug">';
+    if (imgSrc && imgSrc.length > 100) {
+      html += '<img src="' + esc(imgSrc) + '" alt="' + esc(rec.name) + '">';
+    }
+    html += '</div>';
+    html += '<div class="feat-court" id="feat-court-' + j + '">';
+    html += '<h3>Virginia Court History</h3>';
+
+    // Court history
+    var courtHistory = rec.courtHistory || [];
+    var matchedCourt = courtHistory.filter(function(ch) { return lastNameMatches(ch.defendantName, rec.name) && dobMatches(ch.defendantDOB, rec.dob); });
+    if (matchedCourt.length === 0) {
+      html += '<div style="color:#484f58;font-size:12px;font-style:italic;">No Virginia court records found.</div>';
+    } else {
+      for (var m = 0; m < matchedCourt.length; m++) {
+        var cc = matchedCourt[m];
+        var loc = courtLabel(cc.court);
+        var disp = dispLabel(cc.dispositionCode) || '';
+        html += '<div class="feat-court-card">';
+        html += '<div class="court-charge">' + esc(cc.chargeDesc || 'Unknown Charge') + '</div>';
+        html += '<div class="court-meta">';
+        if (loc) html += '<span>' + esc(loc) + '</span> ';
+        if (cc.offenseDate) html += '<span>Offense: ' + esc(cc.offenseDate) + '</span> ';
+        if (disp) html += '<span class="tag ' + dispTagClass(cc.dispositionCode) + '">' + esc(disp) + '</span>';
+        html += '</div>';
+        if (cc.formattedCaseNum || cc.codeSection) {
+          html += '<div class="court-detail">';
+          if (cc.formattedCaseNum) html += 'Case: ' + esc(cc.formattedCaseNum) + ' ';
+          if (cc.codeSection) html += 'Code: ' + esc(cc.codeSection);
+          html += '</div>';
+        }
+        html += '</div>';
+      }
+    }
+    html += '</div></div>'; // close feat-court, feat-expand-area
+    html += '</div>'; // close feat-card
+  }
+  grid.innerHTML = html;
+}
+
+// Click handler for featured cards
+document.getElementById('featured-grid').addEventListener('click', function(e) {
+  var card = e.target.closest('.feat-card');
+  if (!card) return;
+  // Toggle expand
+  card.classList.toggle('expanded');
+});
+
 </script>
 </body>
 </html>
