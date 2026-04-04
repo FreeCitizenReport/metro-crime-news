@@ -795,6 +795,8 @@ window.showBrowse = function() {
   render();
 };
 
+function esc(s){var d=document.createElement("div");d.textContent=s||"";return d.innerHTML;}
+
 function renderLanding() {
   var withMug = [];
   for (var i = 0; i < filteredIndices.length && withMug.length < 10; i++) {
