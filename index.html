@@ -819,7 +819,7 @@ function renderLanding() {
     html += '<div class="feat-card" data-pos="' + pos + '" id="feat-' + j + '">';
     html += '<div class="feat-top">';
     html += '<div class="feat-mug">';
-    if (imgSrc && imgSrc.length > 100) {
+    if (imgSrc && imgSrc.length > 10) {
       html += '<img src="' + esc(imgSrc) + '" alt="' + esc(rec.name) + '">';
     } else {
       html += '<div class="feat-mug-placeholder">No Photo</div>';
@@ -861,7 +861,7 @@ function renderLanding() {
     // Expanded area (hidden by default)
     html += '<div class="feat-expand-area">';
     html += '<div class="feat-big-mug">';
-    if (imgSrc && imgSrc.length > 100) {
+    if (imgSrc && imgSrc.length > 10) {
       html += '<img src="' + esc(imgSrc) + '" alt="' + esc(rec.name) + '">';
     }
     html += '</div>';
