@@ -376,6 +376,7 @@ function normalizeRRJ(arr) {
       }),
       bonds: r.bonds || [],
       mugshot: r.mugshot || '',
+      mugshotDate: r.mugshotDate || '',
       courtHistory: r.courtHistory || [],
       county: r.county || '',
       source: 'RRJ'
@@ -418,6 +419,7 @@ function normalizeHenrico(arr) {
       }),
       bonds: r.bondAmount && r.bondAmount !== '0' ? [{bondType: 'Bond', amount: '$' + Number(r.bondAmount).toLocaleString()}] : [],
       mugshot: r.mugshot || '',
+      mugshotDate: r.mugshotDate || '',
       courtHistory: r.courtHistory || [],
       county: 'Henrico Co. Jail Website',
       source: 'Henrico',
@@ -445,6 +447,7 @@ function normalizeRichmond(arr) {
       }),
       bonds: [],
       mugshot: r.mugshot || '',
+      mugshotDate: r.mugshotDate || '',
       courtHistory: [],
       county: 'Richmond City Jail',
       source: 'Richmond',
@@ -468,6 +471,7 @@ function normalizePamunkey(arr) {
       charges: r.charges || [],
       bonds: [],
       mugshot: r.mugshot || '',
+      mugshotDate: r.mugshotDate || '',
       courtHistory: [],
       county: r.address || '',
       source: 'Pamunkey'
@@ -499,6 +503,12 @@ function normalizePamunkey(arr) {
         var aMug = a.mugshot && a.mugshot.length > 100 ? 0 : 1;
         var bMug = b.mugshot && b.mugshot.length > 100 ? 0 : 1;
         if (aMug !== bMug) return aMug - bMug;
+        // Among mugshot records, sort by mugshotDate desc (most recently scraped first)
+        if (aMug === 0 && bMug === 0) {
+          var aMd = a.mugshotDate ? new Date(a.mugshotDate).getTime() : 0;
+          var bMd = b.mugshotDate ? new Date(b.mugshotDate).getTime() : 0;
+          if (aMd !== bMd) return bMd - aMd;
+        }
         // Newer bookDate first (parse MM/DD/YYYY properly)
         var pa = a.bookDate ? a.bookDate.split('/') : ['0','0','0'];
         var pb = b.bookDate ? b.bookDate.split('/') : ['0','0','0'];
