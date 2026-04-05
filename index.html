@@ -496,28 +496,22 @@ function normalizePamunkey(arr) {
     if (loaded >= total) {
       // Sort: in-custody first (no releaseDate), then by bookDate descending
       RECORDS.sort(function(a, b) {
-        var aHeld = !a.releaseDate ? 0 : 1;
-        var bHeld = !b.releaseDate ? 0 : 1;
-        if (aHeld !== bHeld) return aHeld - bHeld;
-        // Has mugshot above no mugshot
-        var aMug = a.mugshot && a.mugshot.length > 100 ? 0 : 1;
-        var bMug = b.mugshot && b.mugshot.length > 100 ? 0 : 1;
-        if (aMug !== bMug) return aMug - bMug;
-        // Among mugshot records, sort by mugshotDate desc (most recently scraped first)
-        if (aMug === 0 && bMug === 0) {
-          var aMd = a.mugshotDate ? new Date(a.mugshotDate).getTime() : 0;
-          var bMd = b.mugshotDate ? new Date(b.mugshotDate).getTime() : 0;
-          if (aMd !== bMd) return bMd - aMd;
-        }
-        // Newer bookDate first (parse MM/DD/YYYY properly)
-        var pa = a.bookDate ? a.bookDate.split('/') : ['0','0','0'];
-        var pb = b.bookDate ? b.bookDate.split('/') : ['0','0','0'];
-        var da = new Date(pa[2], pa[0]-1, pa[1]);
-        var db = new Date(pb[2], pb[0]-1, pb[1]);
-        if (da > db) return -1;
-        if (da < db) return 1;
-        return 0;
-      });
+    // In-custody first (no releaseDate), released second
+    var aHeld = !a.releaseDate ? 0 : 1;
+    var bHeld = !b.releaseDate ? 0 : 1;
+    if (aHeld !== bHeld) return aHeld - bHeld;
+    // Newer bookDate first (parse MM/DD/YYYY properly)
+    var pa = a.bookDate ? a.bookDate.split('/') : ['0','0','0'];
+    var pb = b.bookDate ? b.bookDate.split('/') : ['0','0','0'];
+    var da = new Date(pa[2], pa[0]-1, pa[1]);
+    var db = new Date(pb[2], pb[0]-1, pb[1]);
+    if (da > db) return -1;
+    if (da < db) return 1;
+    // Tiebreaker: has mugshot above no mugshot
+    var aMug = a.mugshot && a.mugshot.length > 100 ? 0 : 1;
+    var bMug = b.mugshot && b.mugshot.length > 100 ? 0 : 1;
+    return aMug - bMug;
+});
       bar.style.width = '100%';
       setTimeout(function() { bar.style.display = 'none'; }, 600);
       overlay.classList.add('hidden');
