@@ -387,7 +387,7 @@ function normalizeRRJ(arr) {
 function normalizeHenrico(arr) {
   return arr.map(function(r) {
     var bd = r.bookingDate || '';
-    if (bd.includes(' ')) bd = bd.split(' ')[0];
+    var bookTime = ''; if (bd.indexOf(' ') > -1) { try { bookTime = new Date(bd).toISOString(); } catch(e){} bd = bd.split(' ')[0]; }
     // Convert "4/2/2026" to "04/02/2026"
     if (bd) {
       var parts = bd.split('/');
@@ -419,7 +419,7 @@ function normalizeHenrico(arr) {
       }),
       bonds: r.bondAmount && r.bondAmount !== '0' ? [{bondType: 'Bond', amount: '$' + Number(r.bondAmount).toLocaleString()}] : [],
       mugshot: r.mugshot || '',
-      mugshotDate: r.mugshotDate || '',
+      mugshotDate: bookTime || r.mugshotDate || '',
       courtHistory: r.courtHistory || [],
       county: 'Henrico Co. Jail Website',
       source: 'Henrico',
@@ -510,7 +510,10 @@ function normalizePamunkey(arr) {
     var db = new Date(pb[2], pb[0]-1, pb[1]);
     if (da > db) return -1;
     if (da < db) return 1;
-    return 0;
+    // Tiebreaker: most recent booking/scrape time first
+    var ma = a.mugshotDate ? new Date(a.mugshotDate).getTime() : 0;
+    var mb = b.mugshotDate ? new Date(b.mugshotDate).getTime() : 0;
+    return mb - ma;
 });
       bar.style.width = '100%';
       setTimeout(function() { bar.style.display = 'none'; }, 600);
