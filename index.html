@@ -500,17 +500,24 @@ function normalizePamunkey(arr) {
     var aHeld = !a.releaseDate ? 0 : 1;
     var bHeld = !b.releaseDate ? 0 : 1;
     if (aHeld !== bHeld) return aHeld - bHeld;
-    // Newer bookDate first (parse MM/DD/YYYY properly)
+    // Has mugshot above no mugshot
+    var aMug = a.mugshot && a.mugshot.length > 100 ? 0 : 1;
+    var bMug = b.mugshot && b.mugshot.length > 100 ? 0 : 1;
+    if (aMug !== bMug) return aMug - bMug;
+    // Among those with mugshots: most recently scraped first (mugshotDate desc)
+    if (aMug === 0) {
+      var aMS = a.mugshotDate ? new Date(a.mugshotDate).getTime() : 0;
+      var bMS = b.mugshotDate ? new Date(b.mugshotDate).getTime() : 0;
+      if (aMS !== bMS) return bMS - aMS;
+    }
+    // Fallback: most recent bookDate first
     var pa = a.bookDate ? a.bookDate.split('/') : ['0','0','0'];
     var pb = b.bookDate ? b.bookDate.split('/') : ['0','0','0'];
     var da = new Date(pa[2], pa[0]-1, pa[1]);
     var db = new Date(pb[2], pb[0]-1, pb[1]);
     if (da > db) return -1;
     if (da < db) return 1;
-    // Tiebreaker: has mugshot above no mugshot
-    var aMug = a.mugshot && a.mugshot.length > 100 ? 0 : 1;
-    var bMug = b.mugshot && b.mugshot.length > 100 ? 0 : 1;
-    return aMug - bMug;
+    return 0;
 });
       bar.style.width = '100%';
       setTimeout(function() { bar.style.display = 'none'; }, 600);
