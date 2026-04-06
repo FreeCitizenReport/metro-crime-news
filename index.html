@@ -810,7 +810,7 @@ function renderLanding(){
   var grid=document.getElementById("featured-grid");
   if(!grid||!filteredIndices||filteredIndices.length===0)return;
   var withMug=[];
-  for(var i=0;i<filteredIndices.length&&withMug.length<24;i++){
+  for(var i=0;i<filteredIndices.length&&withMug.length<100;i++){
     var r=RECORDS[filteredIndices[i]];
     if(r.mugshot&&r.mugshot.length>100)withMug.push({rec:r,pos:filteredIndices[i]});
   }
