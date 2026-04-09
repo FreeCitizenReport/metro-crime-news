@@ -663,7 +663,7 @@ function render() {
   var srcLabel = rec.source === 'RRJ' ? 'Riverside Regional Jail' : rec.source === 'Henrico' ? 'Henrico Co. Jail Website' : rec.source === 'Pamunkey' ? 'Pamunkey Regional Jail' : 'Richmond City Jail';
 
   // ID info panel
-  var idHTML = '<div class="id-row"><div class="id-label">Name</div><div class="id-value name">' + rec.name + '</div></div>';
+  var idHTML = '<div class="id-row"><div class="id-label">Name</div><div class="id-value name">' + rec.name + '</div></div>';var dateStr = rec.bookDate && rec.bookDate !== 'NO_DATE' ? 'Booked ' + rec.bookDate : (rec.mugshotDate ? 'Data collected: ' + rec.mugshotDate.substring(0, 19).replace('T', ' ') : '');if (dateStr) iDHTML += '<div class="id-row"><div class="id-label">Date</div><div class="id-value">' + dateStr + '</div></div>';
   idHTML += '<div class="id-row"><div class="id-label">Source</div><div class="id-value"><span class="badge badge-source ' + srcClass + '">' + srcLabel + '</span></div></div>';
   idHTML += '<div class="id-row"><div class="id-label">ID #</div><div class="id-value">' + rec.id + '</div></div>';
   if (rec.dob) idHTML += '<div class="id-row"><div class="id-label">DOB</div><div class="id-value">' + rec.dob + '</div></div>';
