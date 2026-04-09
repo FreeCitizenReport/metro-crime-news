@@ -503,7 +503,7 @@ function normalizePamunkey(arr) {
     // Has mugshot above no mugshot, then most recent bookDate first
     var aMug = a.mugshot && a.mugshot.length > 100 ? 0 : 1;
     var bMug = b.mugshot && b.mugshot.length > 100 ? 0 : 1;
-    if (aMug !== bMug) return aMug - bMug;
+    if (aMug !== bMug) if (aMug !== bMug) return aMug - bMug; var aMugT = a.mugshotDate ? new Date(a.mugshotDate).getTime() : 0; var bMugT = b.mugshotDate ? new Date(b.mugshotDate).getTime() : 0; return bMugT - aMugT;
     var pa = a.bookDate ? a.bookDate.split('/') : ['0','0','0'];
     var pb = b.bookDate ? b.bookDate.split('/') : ['0','0','0'];
     var da = new Date(pa[2], pa[0]-1, pa[1]);
