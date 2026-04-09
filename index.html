@@ -495,7 +495,8 @@ function normalizePamunkey(arr) {
     bar.style.width = (loaded / total * 90 + 10) + '%';
     if (loaded >= total) {
       // Sort: in-custody first (no releaseDate), then by bookDate descending
-      RECORDS.sort(function(a, b) {
+      RECORDS.forEach(function(r){ if (!r.mugshotDate && r.bookDate) r.mugshotDate = r.bookDate; });
+  RECORDS.sort(function(a, b) {
     // In-custody first (no releaseDate), released second
     var aHeld = !a.releaseDate ? 0 : 1;
     var bHeld = !b.releaseDate ? 0 : 1;
