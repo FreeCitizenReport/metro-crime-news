@@ -488,7 +488,7 @@ function normalizePamunkey(arr) {
   var overlay = document.getElementById('loading-overlay');
   bar.style.width = '5%';
   var loaded = 0;
-  var total = 3;
+  var total = 4;
 
   function progress() {
     loaded++;
@@ -544,6 +544,7 @@ function normalizePamunkey(arr) {
     .then(function(r) { return r.json(); })
     .then(function(data) { RECORDS = RECORDS.concat(normalizeRichmond(data)); sourcesLoaded.richmond = true; })
     .catch(function(e) { console.error('Richmond load failed:', e); })
+  .then(progress)
 
   fetch('https://freecitizenreport.github.io/pamunkey-viewer/data.json?v=' + Date.now())
     .then(function(r) { return r.json(); })
