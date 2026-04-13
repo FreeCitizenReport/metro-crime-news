@@ -520,33 +520,33 @@ function normalizePamunkey(arr) {
       setTimeout(function() { bar.style.display = 'none'; }, 600);
       overlay.classList.add('hidden');
       applyFilters();
-      preloadBlobs();
+      /* preloadBlobs removed for perf */
       if (typeof renderLanding === "function") renderLanding();
     }
   }
 
   // RRJ
-  fetch('https://freecitizenreport.github.io/rrj-viewer/data.json?v=' + Date.now())
+  fetch('https://freecitizenreport.github.io/rrj-viewer/data.json?v=' + new Date().toISOString().slice(0,10))
     .then(function(r) { return r.json(); })
     .then(function(data) { RECORDS = RECORDS.concat(normalizeRRJ(data)); sourcesLoaded.rrj = true; })
     .catch(function(e) { console.error('RRJ load failed:', e); })
     .then(progress);
 
   // Henrico
-  fetch('https://freecitizenreport.github.io/henrico-viewer/data.json?v=' + Date.now())
+  fetch('https://freecitizenreport.github.io/henrico-viewer/data.json?v=' + new Date().toISOString().slice(0,10))
     .then(function(r) { return r.json(); })
     .then(function(data) { RECORDS = RECORDS.concat(normalizeHenrico(data)); sourcesLoaded.henrico = true; })
     .catch(function(e) { console.error('Henrico load failed:', e); })
     .then(progress);
 
   // Richmond
-  fetch('https://freecitizenreport.github.io/richmond-viewer/data.json?v=' + Date.now())
+  fetch('https://freecitizenreport.github.io/richmond-viewer/data.json?v=' + new Date().toISOString().slice(0,10))
     .then(function(r) { return r.json(); })
     .then(function(data) { RECORDS = RECORDS.concat(normalizeRichmond(data)); sourcesLoaded.richmond = true; })
     .catch(function(e) { console.error('Richmond load failed:', e); })
   .then(progress)
 
-  fetch('https://freecitizenreport.github.io/pamunkey-viewer/data.json?v=' + Date.now())
+  fetch('https://freecitizenreport.github.io/pamunkey-viewer/data.json?v=' + new Date().toISOString().slice(0,10))
     .then(function(r) { return r.json(); })
     .then(function(data) { RECORDS = RECORDS.concat(normalizePamunkey(data)); sourcesLoaded.pamunkey = true; })
     .catch(function(e) { console.error('Pamunkey load failed:', e); })
