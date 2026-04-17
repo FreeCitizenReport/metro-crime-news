@@ -401,9 +401,13 @@ function normalizeHenrico(arr) {
     var nameParts = rawName.split(/\s+/);
     var formatted = rawName;
     if (nameParts.length >= 2) {
-      var last = nameParts[nameParts.length - 1];
-      var first = nameParts.slice(0, -1).join(' ');
-      formatted = last + ', ' + first;
+      var genSuf = ['JR','SR','II','III','IV','V','VI'];
+      var sfx = '';
+      var parts = nameParts.slice();
+      if (parts.length >= 3 && genSuf.indexOf(parts[parts.length-1]) > -1) { sfx = ' ' + parts.pop(); }
+      var last = parts[parts.length - 1];
+      var first = parts.slice(0, -1).join(' ');
+      formatted = last + ', ' + first + sfx;
     }
     return {
       id: r.inmateId || '',
