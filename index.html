@@ -501,11 +501,7 @@ function normalizePamunkey(arr) {
       // Sort: in-custody first (no releaseDate), then by bookDate descending
       RECORDS.forEach(function(r){ if (!r.mugshotDate && r.bookDate) r.mugshotDate = r.bookDate; });
   RECORDS.sort(function(a, b) {
-    // In-custody first (no releaseDate), released second
-    var aHeld = !a.releaseDate ? 0 : 1;
-    var bHeld = !b.releaseDate ? 0 : 1;
-    if (aHeld !== bHeld) return aHeld - bHeld;
-    // Has mugshot above no mugshot, then most recent bookDate first
+    // Most recent bookDate first; mugshot ranks higher within the same date
     var aMug = a.mugshot && a.mugshot.length > 100 ? 0 : 1;
     var bMug = b.mugshot && b.mugshot.length > 100 ? 0 : 1;
     if (aMug !== bMug) return aMug - bMug;
