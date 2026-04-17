@@ -38,8 +38,8 @@ select:focus, .filter-text:focus { outline: none; border-color: #1f6feb; }
 #main { display: flex; flex: 1; overflow: hidden; }
 /* LEFT PANEL */
 #left-panel { width: 210px; flex-shrink: 0; background: #161b22; border-right: 1px solid #30363d; display: flex; flex-direction: column; overflow: hidden; }
-#mugshot-wrap { width: 100%; height: 320px; background: #0d1117; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-bottom: 1px solid #30363d; }
-#mugshot { width: 100%; height: 320px; object-fit: contain; background: #0d1117; display: block; }
+#mugshot-wrap { width: 100%; aspect-ratio: 4/5; overflow: hidden; background: #0d1117; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-bottom: 1px solid #30363d; }
+#mugshot { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; background: #0d1117; display: block; }
 #id-info { padding: 10px 12px; overflow-y: auto; flex: 1; }
 .id-row { margin-bottom: 7px; }
 .id-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.7px; color: #8b949e; margin-bottom: 1px; }
@@ -178,7 +178,7 @@ select:focus, .filter-text:focus { outline: none; border-color: #1f6feb; }
 .feat-card.expanded{border-color:#1f6feb;grid-column:1/-1;}
 .feat-card.expanded .feat-mug{display:none !important;}
 .feat-mug{width:100%;height:160px;overflow:hidden;background:#0d1117;}
-.feat-mug img{width:100%;height:100%;object-fit:contain;object-position:center;}
+.feat-mug img{width:100%;height:100%;object-fit:cover;object-position:center 20%;}
 .feat-mug-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#484f58;font-size:11px;}
 .feat-body{padding:8px 10px 10px;}
 .feat-name{font-size:13px;font-weight:700;color:#f0f6fc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
