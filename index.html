@@ -379,6 +379,7 @@ function normalizeRRJ(arr) {
       mugshotDate: r.mugshotDate || '',
       courtHistory: r.courtHistory || [],
       county: r.county || '',
+      firstSeenAt: r.firstSeenAt || '',
       source: 'RRJ'
     };
   });
@@ -426,6 +427,7 @@ function normalizeHenrico(arr) {
       mugshotDate: bookTime || r.mugshotDate || '',
       courtHistory: r.courtHistory || [],
       county: 'Henrico Co. Jail Website',
+      firstSeenAt: r.firstSeenAt || '',
       source: 'Henrico',
       facility: r.facility || ''
     };
@@ -454,6 +456,7 @@ function normalizeRichmond(arr) {
       mugshotDate: r.mugshotDate || '',
       courtHistory: [],
       county: 'Richmond City Jail',
+      firstSeenAt: r.firstSeenAt || '',
       source: 'Richmond',
       age: r.age || '',
       height: r.height || '',
@@ -478,6 +481,7 @@ function normalizePamunkey(arr) {
       mugshotDate: r.mugshotDate || '',
       courtHistory: [],
       county: r.address || '',
+      firstSeenAt: r.firstSeenAt || '',
       source: 'Pamunkey'
     };
   });
@@ -501,24 +505,16 @@ function normalizePamunkey(arr) {
       // Sort: in-custody first (no releaseDate), then by bookDate descending
       RECORDS.forEach(function(r){ if (!r.mugshotDate && r.bookDate) r.mugshotDate = r.bookDate; });
   RECORDS.sort(function(a, b) {
-      // Most recent activity first. This is a news viewer — recency drives order, not custody.
-      // Latest = max(bookDate, releaseDate, mugshotDate). All missing dates become 0.
-      var toTs = function(s) {
-        if (!s || s === 'NO_DATE') return 0;
-        var t = new Date(s).getTime();
-        return isNaN(t) ? 0 : t;
-      };
-      var getLatest = function(r) {
-        return Math.max(toTs(r.bookDate), toTs(r.releaseDate), toTs(r.mugshotDate));
-      };
-      var aDate = getLatest(a);
-      var bDate = getLatest(b);
-      if (aDate !== bDate) return bDate - aDate;
-      // Tiebreak within same date: mugshots above no-mugshots
-      var aMug = !!a.mugshot;
-      var bMug = !!b.mugshot;
-      if (aMug !== bMug) return bMug - aMug;
-      return 0;
+      // Canonical sort: firstSeenAt DESC, bookDate DESC, id DESC (per SORT_RULE.md)
+      var fa = a.firstSeenAt || '';
+      var fb = b.firstSeenAt || '';
+      if (fa !== fb) return fb.localeCompare(fa);
+      var ba = a.bookDate || '';
+      var bb = b.bookDate || '';
+      if (ba !== bb) return bb.localeCompare(ba);
+      var ja = a.jacket || a.id || '';
+      var jb = b.jacket || b.id || '';
+      return jb.localeCompare(ja);
     });
       bar.style.width = '100%';
       setTimeout(function() { bar.style.display = 'none'; }, 600);
