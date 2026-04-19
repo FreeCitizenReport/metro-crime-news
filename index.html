@@ -501,21 +501,25 @@ function normalizePamunkey(arr) {
       // Sort: in-custody first (no releaseDate), then by bookDate descending
       RECORDS.forEach(function(r){ if (!r.mugshotDate && r.bookDate) r.mugshotDate = r.bookDate; });
   RECORDS.sort(function(a, b) {
-    // Most recent bookDate first; mugshot ranks higher within the same date
-    var aMug = a.mugshot && a.mugshot.length > 100 ? 0 : 1;
-    var bMug = b.mugshot && b.mugshot.length > 100 ? 0 : 1;
-    if (aMug !== bMug) return aMug - bMug;
-    var pa = a.bookDate ? a.bookDate.split('/') : ['0','0','0'];
-    var pb = b.bookDate ? b.bookDate.split('/') : ['0','0','0'];
-    var da = new Date(pa[2], pa[0]-1, pa[1]);
-    var db = new Date(pb[2], pb[0]-1, pb[1]);
-    if (da > db) return -1;
-    if (da < db) return 1;
-    // Tiebreaker: most recent booking/scrape time first
-    var ma = a.mugshotDate ? new Date(a.mugshotDate).getTime() : 0;
-    var mb = b.mugshotDate ? new Date(b.mugshotDate).getTime() : 0;
-    return mb - ma;
-});
+      // Most recent activity first. This is a news viewer — recency drives order, not custody.
+      // Latest = max(bookDate, releaseDate, mugshotDate). All missing dates become 0.
+      var toTs = function(s) {
+        if (!s || s === 'NO_DATE') return 0;
+        var t = new Date(s).getTime();
+        return isNaN(t) ? 0 : t;
+      };
+      var getLatest = function(r) {
+        return Math.max(toTs(r.bookDate), toTs(r.releaseDate), toTs(r.mugshotDate));
+      };
+      var aDate = getLatest(a);
+      var bDate = getLatest(b);
+      if (aDate !== bDate) return bDate - aDate;
+      // Tiebreak within same date: mugshots above no-mugshots
+      var aMug = !!a.mugshot;
+      var bMug = !!b.mugshot;
+      if (aMug !== bMug) return bMug - aMug;
+      return 0;
+    });
       bar.style.width = '100%';
       setTimeout(function() { bar.style.display = 'none'; }, 600);
       overlay.classList.add('hidden');
