@@ -502,7 +502,7 @@ function normalizePamunkey(arr) {
     loaded++;
     bar.style.width = (loaded / total * 90 + 10) + '%';
     if (loaded >= total) {
-      // Sort: in-custody first (no releaseDate), then by bookDate descending
+      // PERMANENT SORT RULE — canonical per ~/richmond-scraper/SORT_RULE.md. firstSeenAt DESC, bookDate DESC, id DESC. No in-custody tier.
       RECORDS.forEach(function(r){ if (!r.mugshotDate && r.bookDate) r.mugshotDate = r.bookDate; });
   RECORDS.sort(function(a, b) {
       // Canonical sort: firstSeenAt DESC, bookDate DESC, id DESC (per SORT_RULE.md)
