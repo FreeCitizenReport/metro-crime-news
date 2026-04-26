@@ -653,7 +653,7 @@ function applyFilters() {
     document.getElementById('filter-count').textContent = '';
     btn.classList.remove('active-filter');
   }
-  if (filteredIndices.length > 0) { render(); } else { document.getElementById('counter').innerHTML = '<span style="color:#ff7b72">No matches</span>'; }
+  if (filteredIndices.length > 0) { render(); if (typeof renderLanding === 'function') renderLanding(); } else { document.getElementById('counter').innerHTML = '<span style="color:#ff7b72">No matches</span>'; }
 }
 
 function clearFilters() {
@@ -850,7 +850,7 @@ function esc(s){var d=document.createElement("div");d.textContent=s||"";return d
 
 function renderLanding(){
   var grid=document.getElementById("featured-grid");
-  if(!grid||!filteredIndices||filteredIndices.length===0)return;
+  if(!grid||!filteredIndices||filteredIndices.length===0){var _ept=document.getElementById('pager-top');if(_ept)_ept.innerHTML='<div class="pager-empty">No matches</div>';var _epb=document.getElementById('pager-bot');if(_epb)_epb.innerHTML='';grid.innerHTML='';return;}
   var withMug=[];
   for(var i=0;i<filteredIndices.length;i++){
     var r=RECORDS[filteredIndices[i]];
