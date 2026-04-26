@@ -504,19 +504,28 @@ function normalizePamunkey(arr) {
     if (loaded >= total) {
       // PERMANENT SORT RULE — canonical per ~/richmond-scraper/SORT_RULE.md. firstSeenAt DESC, bookDate DESC, id DESC. No in-custody tier.
       RECORDS.forEach(function(r){ if (!r.mugshotDate && r.bookDate) r.mugshotDate = r.bookDate; });
+    RECORDS = RECORDS.filter(function(r) { return r.mugshot; });
   RECORDS.sort(function(a, b) {
-      // PERMANENT SORT RULE - canonical per ~/richmond-scraper/SORT_RULE.md.
-      // ORDER BY firstSeenAt DESC, bookDate DESC (numeric), id DESC (numeric). Do NOT add in-custody or has-mugshot tier.
-      var fa = a.firstSeenAt || '';
-      var fb = b.firstSeenAt || '';
-      if (fa !== fb) return fb.localeCompare(fa);
-      var ba = (a.bookDate || '').replace(/^(\d+)\/(\d+)\/(\d+)$/, '$3/$1/$2');
-      var bb = (b.bookDate || '').replace(/^(\d+)\/(\d+)\/(\d+)$/, '$3/$1/$2');
-      if (ba !== bb) return bb.localeCompare(ba);
-      var ja = parseInt(a.jacket || a.id, 10) || 0;
-      var jb = parseInt(b.jacket || b.id, 10) || 0;
-      return jb - ja;
-    });
+      // Canonical SORT_RULE.md: retrievedAt DESC with 24h clamp, mugshot filter, custody-agnostic
+      function _pd(s) {
+          if (!s) return NaN;
+          var mm = String(s).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+          return mm ? new Date(+mm[3], +mm[1]-1, +mm[2]).getTime() : Date.parse(s);
+      }
+      var fa = a.firstSeenAt ? Date.parse(a.firstSeenAt) : NaN;
+      var fb = b.firstSeenAt ? Date.parse(b.firstSeenAt) : NaN;
+      var ba = _pd(a.bookDate), bb = _pd(b.bookDate);
+      var capA = isNaN(ba) ? Infinity : ba + 86400000;
+      var capB = isNaN(bb) ? Infinity : bb + 86400000;
+      var ra = isNaN(fa) ? (isNaN(ba) ? 0 : ba) : Math.min(fa, capA);
+      var rb = isNaN(fb) ? (isNaN(bb) ? 0 : bb) : Math.min(fb, capB);
+      if (ra !== rb) return rb - ra;
+      var bd = (isNaN(bb) ? 0 : bb) - (isNaN(ba) ? 0 : ba);
+      if (bd) return bd;
+      var nameA = (a.name || ((a.lastName||"") + ", " + (a.firstName||""))).toUpperCase();
+      var nameB = (b.name || ((b.lastName||"") + ", " + (b.firstName||""))).toUpperCase();
+      return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+  });
       bar.style.width = '100%';
       setTimeout(function() { bar.style.display = 'none'; }, 600);
       overlay.classList.add('hidden');
