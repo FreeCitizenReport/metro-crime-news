@@ -753,7 +753,7 @@ function render() {
   var isFiltered = total < RECORDS.length;
   document.getElementById('counter').innerHTML = isFiltered ?
     '<span class="filtered-count">' + (filteredPos + 1) + ' of ' + total + ' filtered</span> (of ' + RECORDS.length + ' total)' :
-    'Record ' + (filteredPos + 1) + ' of ' + RECORDS.length;
+    (filteredPos + 1) + ' / ' + RECORDS.length;
 }
 
 /* ═══════════════════════════════════════
