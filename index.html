@@ -6,7 +6,7 @@
 <title>Metro Crime News — Richmond Area Booking Records</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0d1117; color: #c9d1d9; font-family: 'Segoe UI', system-ui, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 /* HEADER */
 #header { background: #161b22; border-bottom: 1px solid #30363d; padding: 8px 14px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: nowrap; }
 #header h1 { font-size: 14px; font-weight: 700; color: #f0f6fc; white-space: nowrap; }
@@ -216,12 +216,14 @@ select:focus, .filter-text:focus { outline: none; border-color: #1f6feb; }
   .feat-card.expanded .feat-expand-area { flex-direction:column; }
   .feat-big-mug { width:100%; }
 }
+
+h1 .subtitle { display: block; font-size: 11px; color: #8b949e; font-weight: 400; }
 </style>
 </head>
 <body>
 
 <div id="header">
-  <h1>Metro Crime News</h1>
+  <h1>Metro Crime News <span class="subtitle">Booking records from the Richmond metropolitan area</span></h1>
   <div id="view-toggle"><button id="btn-home" class="active" onclick="showLanding()">Home</button><button id="btn-browse" onclick="showBrowse()">Browse</button></div>
   <div id="search-wrap">
     <input id="search-input" type="text" placeholder="Search by name..." autocomplete="off">
@@ -233,13 +235,13 @@ select:focus, .filter-text:focus { outline: none; border-color: #1f6feb; }
   </div>
   <button id="filter-toggle" onclick="toggleFilters()">Filters <span id="filter-count"></span></button>
   <div id="nav-btns">
-    <button onclick="prev()">Prev</button>
-    <button onclick="next()">Next</button>
+    <button onclick="prev()">&larr;</button>
+    <button onclick="next()">&rarr;</button>
   </div>
   <div id="counter">Loading...</div>
 </div>
 
-<div id="disclaimer">All defendants are presumed innocent until proven guilty in a court of law.</div>
+<div id="disclaimer">Public records. An arrest is not a conviction. All individuals are presumed innocent.</div>
 
 <div id="filter-bar">
   <div class="filter-group">
@@ -294,7 +296,7 @@ select:focus, .filter-text:focus { outline: none; border-color: #1f6feb; }
 </div>
 
 <div id="landing-page">
-  <div class="landing-header"><h2>Latest Bookings <span class="count" id="feat-count"></span></h2></div>
+  <div class="landing-header"><h2>Latest mugshots <span class="count" id="feat-count"></span></h2></div>
   <div class="featured-grid" id="featured-grid"></div>
 </div>
 
