@@ -1113,6 +1113,35 @@ window.isCourtRefCharge = function(text){ if(!text) return false; var t=String(t
   if (typeof renderLanding === "function") renderLanding();
   if (typeof render === "function" && document.getElementById("browse") && document.getElementById("browse").classList.contains("active")) render();
 })();
+
+// Merge Richmond court history from richmond-viewer (not covered by primary pipeline)
+(function _mergeExtraCourt(){
+  if (typeof RECORDS === "undefined" || !RECORDS.length) { setTimeout(_mergeExtraCourt, 1000); return; }
+  if (typeof sourcesLoaded !== "undefined") {
+    var allDone = true;
+    for (var k in sourcesLoaded) { if (sourcesLoaded[k] !== true) { allDone = false; break; } }
+    if (!allDone) { setTimeout(_mergeExtraCourt, 1000); return; }
+  }
+  if (window._extraCourtMerged) return;
+  fetch("https://freecitizenreport.github.io/richmond-viewer/court_data.json", {cache:"no-store"})
+    .then(function(r){return r.json();})
+    .catch(function(){return {};})
+    .then(function(rCourt){
+      var merged = 0;
+      RECORDS.forEach(function(r){
+        if (r.courtHistory && r.courtHistory.length) return;
+        if (r.source === "Richmond" && rCourt[r.id] && Array.isArray(rCourt[r.id]) && rCourt[r.id].length) {
+          r.courtHistory = rCourt[r.id];
+          merged++;
+        }
+      });
+      window._extraCourtMerged = true;
+      window._extraCourtMergedCount = merged;
+      try { console.log("MCN merged court history into " + merged + " Richmond records"); } catch(e){}
+      if (typeof renderLanding === "function") renderLanding();
+      if (typeof render === "function" && typeof currentView !== "undefined" && currentView === "browse") render();
+    });
+})();
 </script>
 </body>
 </html>
