@@ -926,12 +926,12 @@ function renderLanding(){
     var charges=rec.charges||[];
     if(charges.length>0){
       html+="<div class=\"feat-charges\">";
-      for(var k=0;k<Math.min(2,charges.length);k++){
+      for(var k=0;k<Math.min(1,charges.length);k++){
         var c=charges[k];
         var desc=(typeof c==="string")?c:(c.description||"Unknown Charge");
         html+="<div class=\"feat-charge\">"+esc(desc)+"</div>";
       }
-      if(charges.length>2)html+="<div class=\"feat-more\">+"+(charges.length-2)+" more</div>";
+      if(charges.length>1)html+="<div class=\"feat-more\">+"+(charges.length-1)+" more</div>";
       html+="</div>";
     }
     html+="</div>";
